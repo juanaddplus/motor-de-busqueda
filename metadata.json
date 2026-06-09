@@ -1,0 +1,6 @@
+{
+  "name": "ADD+ Analisis Inmobiliario",
+  "description": "Herramienta PropTech premium de evaluacion algoritmica y analisis inmobiliario de zonas y predios en Bogota, Colombia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

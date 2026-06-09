@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Poppins", sans-serif;
+  
+  --color-brand-dark: #1D2B36;
+  --color-brand-light: #F4F6F8;
+  --color-brand-accent: #D38A72;
+  --color-brand-accent-hover: #b87158;
+}
