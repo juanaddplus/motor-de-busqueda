@@ -15,7 +15,7 @@ export function norm(s: string | null | undefined): string {
 
 export function fmtMoney(v?: number): string {
   if (v === undefined || v === null || isNaN(v)) return "N/D";
-  return `$${v.toFixed(2).replace(/\.?0+$/, "")}M`;
+  return `$${(v * 1000000).toLocaleString("es-CO")}`;
 }
 
 export function findZone(query: string): Zone | null {

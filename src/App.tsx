@@ -27,7 +27,8 @@ import {
   Server,
   Heart,
   ShoppingBag,
-  UserCheck
+  UserCheck,
+  Loader2
 } from "lucide-react";
 import { Zone, Lead, AnalysisState } from "./types";
 import { findZone, vectorFor, fmtMoney, geocode, nearestBarrio, getLocalidadFromNomenclature } from "./utils";
@@ -320,7 +321,7 @@ export default function App() {
   const activeVector = searchState.selectedZone ? vectorFor(searchState.selectedZone) : null;
 
   return (
-    <div className="min-h-screen bg-[#F4F6F8] font-sans antialiased text-brand-dark flex flex-col selection:bg-brand-accent/30">
+    <div className="min-h-screen bg-[#F4F6F8] font-sans antialiased text-brand-dark flex flex-col selection:bg-brand-accent/30 overflow-x-hidden">
       
       {/* Premium Navigation Header */}
       <header className="bg-white border-b border-neutral-100 sticky top-0 z-40 shadow-sm transition-all duration-300">
@@ -362,7 +363,7 @@ export default function App() {
 
       {/* Admin Panel Overlay */}
       {adminMode ? (
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-8">
+        <main className="flex-1 max-w-6xl w-full mx-auto p-4">
           <div className="bg-white rounded-3xl border border-neutral-100 shadow-xl overflow-hidden p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-neutral-100 pb-6 mb-6">
               <div>
@@ -465,13 +466,13 @@ export default function App() {
           </div>
         </main>
       ) : (
-        <main className="flex-1 w-full flex flex-col justify-center py-6 px-4 md:py-12">
+        <main className="flex-1 w-full flex flex-col justify-center py-2 px-4 md:py-4">
           
           {/* STATE 1: Default search block */}
           {!searchState.searchedAddress && !searchState.searching && (
             <div className="max-w-4xl mx-auto w-full">
               {/* Luxury Intro Hero Banner */}
-              <div className="text-center mb-8 max-w-2xl mx-auto">
+              <div className="text-center mb-6 max-w-2xl mx-auto">
                 <span className="inline-flex items-center gap-1 bg-white border border-neutral-100 rounded-full px-4 py-1.5 text-xs font-semibold text-brand-accent shadow-sm mb-4">
                   <Sparkles className="w-4.5 h-4.5 text-brand-accent fill-brand-accent/20" />
                   Estrategia AVM Validadora & PropTech
@@ -545,6 +546,94 @@ export default function App() {
                 </div>
               </div>
 
+              {!searchState.unlocked ? (
+                <div className="bg-white rounded-3xl p-6 md:p-8 text-brand-dark shadow-xl border border-neutral-200/60 w-full text-left mb-6 relative animate-fade-in z-30">
+                  <span className="text-[10px] uppercase tracking-widest font-extrabold bg-brand-light text-brand-accent px-3 py-1 rounded-full border border-brand-accent/20 inline-block mb-4">
+                    Desbloqueo Seguro y Rápido
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-extrabold tracking-tight leading-tight mb-3">
+                    Desbloquea el análisis PropTech relacional AVM para tu polígono
+                  </h3>
+                  <p className="text-[13px] md:text-sm text-neutral-500 leading-relaxed mb-6 font-medium">
+                    Completa tus datos para consultar gratuitamente la matriz y variables algorítmicas en Tercera Forma Normal (3NF) aplicadas a la rentabilidad y plusvalía de tu inmueble.
+                  </p>
+
+                  <form onSubmit={handleLeadSubmit} className="space-y-4 font-sans max-w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
+                        <User className="w-4 h-4 text-neutral-400 shrink-0" />
+                        <input
+                          type="text"
+                          required
+                          placeholder="Tu Nombre"
+                          value={formData.nombre}
+                          onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                          className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
+                          disabled={formLoading}
+                        />
+                      </div>
+                      <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-neutral-400 shrink-0" />
+                        <input
+                          type="tel"
+                          required
+                          placeholder="WhatsApp"
+                          value={formData.telefono}
+                          onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                          className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
+                          disabled={formLoading}
+                        />
+                      </div>
+                      <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-neutral-400 shrink-0" />
+                        <input
+                          type="email"
+                          required
+                          placeholder="Correo"
+                          value={formData.correo}
+                          onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
+                          className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
+                          disabled={formLoading}
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={formLoading}
+                      className="w-full bg-brand-dark hover:bg-neutral-800 text-white font-extrabold text-xs md:text-sm uppercase tracking-widest py-4 rounded-xl shadow-lg transition active:scale-95 disabled:opacity-50 inline-flex items-center justify-center gap-2 cursor-pointer mt-4 border border-white/10"
+                      id="lead-submit-btn"
+                    >
+                      {formLoading ? (
+                        <>
+                          <Loader2 className="w-4.5 h-4.5 animate-spin text-brand-accent shrink-0" />
+                          <span>Procesando Desbloqueo...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Unlock className="w-4 h-4 text-brand-accent shrink-0" />
+                          <span>Desbloquear Reporte AVM Instantáneo →</span>
+                        </>
+                      )}
+                    </button>
+                    <p className="text-[10px] text-neutral-500 text-center font-medium mt-3">
+                      Datos confidenciales · Solo te contactaremos para entregarte tu análisis en 24 hrs.
+                    </p>
+                  </form>
+                  
+                  <div className="pt-6 mt-8 border-t border-neutral-100">
+                    <p className="text-[10px] tracking-wider uppercase font-bold text-neutral-400 mb-3 text-center">Dashboard Ofuscado</p>
+                    <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 opacity-40 blur-sm pointer-events-none select-none flex flex-col gap-3">
+                      <div className="h-4 w-1/3 bg-neutral-300 rounded mb-2"></div>
+                      <div className="flex gap-2"><div className="h-2 w-full bg-neutral-300 rounded-full"></div><div className="h-2 w-full bg-neutral-300 rounded-full"></div></div>
+                      <div className="flex gap-2"><div className="h-2 w-full bg-neutral-300 rounded-full"></div><div className="h-2 w-2/3 bg-neutral-300 rounded-full"></div></div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative w-full">
+                  <div className="transition-all duration-700 opacity-100 max-h-[5000px] overflow-visible">
+                  
               {/* Interactive Form for Property customization */}
               <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-md mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-center sm:text-left">
@@ -612,95 +701,6 @@ export default function App() {
                   </div>
                 </div>
               </div>
-
-              {/* PERSISTENT WRAPPER WITH LURKING BLUR STATE OR UNLOCKED */}
-              <div className="relative">
-                
-                {/* LURKING locked layer overlay + LEAD FORM */}
-                {!searchState.unlocked && (
-                  <div className="absolute inset-0 z-20 backdrop-blur-sm bg-white/20 flex flex-col justify-start items-center pt-8 px-4 h-full pointer-events-auto">
-                    <div className="bg-white rounded-3xl p-6 md:p-8 text-brand-dark shadow-[0_30px_60px_rgba(0,0,0,0.2)] border border-neutral-200/60 w-full max-w-3xl text-left relative z-30 animate-fade-in mt-10">
-                        <div className="relative z-10">
-                          <span className="text-[10px] uppercase tracking-widest font-extrabold bg-brand-light text-brand-accent px-3 py-1 rounded-full border border-brand-accent/20 inline-block mb-4">
-                            Desbloqueo Parametrizado Gratis
-                          </span>
-                          <h3 className="text-xl md:text-2xl font-extrabold tracking-tight leading-tight mb-3">
-                            Desbloquea el análisis PropTech relacional AVM para tu polígono
-                          </h3>
-                          <p className="text-xs text-neutral-500 leading-relaxed mb-6 font-medium">
-                            Completa tus datos para consultar gratuitamente la matriz y variables de Tercera Forma Normal (3NF) aplicadas a tu inmueble.
-                          </p>
-
-                          <form onSubmit={handleLeadSubmit} className="space-y-4 font-sans max-w-2xl">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                              <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
-                                <User className="w-4 h-4 text-neutral-400 shrink-0" />
-                                <input
-                                  type="text"
-                                  required
-                                  placeholder="Tu Nombre"
-                                  value={formData.nombre}
-                                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                                  className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
-                                  disabled={formLoading}
-                                />
-                              </div>
-                              <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-neutral-400 shrink-0" />
-                                <input
-                                  type="tel"
-                                  required
-                                  placeholder="WhatsApp"
-                                  value={formData.telefono}
-                                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                                  className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
-                                  disabled={formLoading}
-                                />
-                              </div>
-                              <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-200 focus-within:border-brand-accent transition flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-neutral-400 shrink-0" />
-                                <input
-                                  type="email"
-                                  required
-                                  placeholder="Correo"
-                                  value={formData.correo}
-                                  onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
-                                  className="w-full bg-transparent text-xs text-brand-dark focus:outline-none placeholder-neutral-400 font-semibold"
-                                  disabled={formLoading}
-                                />
-                              </div>
-                            </div>
-
-                            <button
-                              type="submit"
-                              disabled={formLoading}
-                              className="w-full bg-brand-dark hover:bg-neutral-800 text-white font-extrabold text-xs md:text-sm uppercase tracking-widest py-4 rounded-xl shadow-lg transition active:scale-95 disabled:opacity-50 inline-flex items-center justify-center gap-2 cursor-pointer mt-4 border border-white/10"
-                              id="lead-submit-btn"
-                            >
-                              {formLoading ? (
-                                <>
-                                  <Loader2 className="w-4.5 h-4.5 animate-spin text-brand-accent shrink-0" />
-                                  <span>Procesando Desbloqueo...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Unlock className="w-4 h-4 text-brand-accent shrink-0" />
-                                  <span>Desbloquear Reporte AVM Instantáneo →</span>
-                                </>
-                              )}
-                            </button>
-                            <p className="text-[10px] text-neutral-500 text-center font-medium mt-3">
-                              Compatibilidad 3NF garantizada · Entrega de reporte gratuita y contacto con analista humano opcional en menos de 24 hrs.
-                            </p>
-                          </form>
-                        </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* BLURRED / LOCKED PAGES CONTENT CONTAINER */}
-                <div className="relative w-full">
-                  <div className={`transition-all duration-700 ${!searchState.unlocked ? "filter blur-[6px] opacity-20 select-none pointer-events-none max-h-[600px] overflow-hidden" : "filter-none opacity-100 max-h-[5000px] overflow-visible"}`}>
                   
                     {/* 01 · DASHBOARD DE DATOS ESTRUCTURADOS */}
                   <div className="bg-brand-dark rounded-3xl p-6 md:p-8 shadow-xl mb-6 border-b-4 border-brand-accent overflow-hidden relative">
@@ -989,8 +989,8 @@ export default function App() {
                   
 
                 </div>
-              </div>
-            </div>
+                </div>
+              )}
 
             {/* Action buttons footer for unlocked view */}
               {searchState.unlocked && (
@@ -1028,20 +1028,21 @@ export default function App() {
       )}
 
       {/* Corporate Technical Footer */}
-      <footer className="bg-white border-t border-neutral-100 py-8 px-4 mt-12 shrink-0">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left">
-            <span className="font-display text-2xl font-black tracking-tight text-brand-dark">
+      <footer className="bg-white border-t border-neutral-100 py-3 px-4 shrink-0">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-center md:text-left flex items-center gap-3">
+            <span className="font-display text-lg font-black tracking-tight text-brand-dark">
               add<span className="text-brand-accent">+</span>
             </span>
-            <p className="text-[10px] text-neutral-400 font-bold mt-1 uppercase tracking-widest">
-              Corte Técnico Informativo — Junio 2026
+            <div className="h-3 w-px bg-neutral-200 hidden md:block"></div>
+            <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest leading-tight">
+              Corte Técnico — 2026
             </p>
           </div>
 
-          <div className="text-center md:text-right max-w-lg">
-            <p className="text-[10px] text-neutral-400 font-medium leading-relaxed">
-              Modelos de tasación y datos recopilados de: Cámara de Comercio de Bogotá (Radar de Eficiencia Logística), Empresa Metro de Bogotá (EMB), Instituto de Desarrollo Urbano (IDU) y micro-datos DANE. Los algoritmos AVM calculan de forma aproximada el valor del suelo con factores de fricción teóricos basados en mercados hipotecarios de la República de Colombia.
+          <div className="text-center md:text-right max-w-xl">
+            <p className="text-[9px] text-neutral-400 font-medium leading-tight">
+              Modelos AVM basados en micro-datos DANE, EMB e IDU. Las valoraciones emplean factores de fricción teóricos del mercado hipotecario colombiano. No constituyen un avalúo comercial oficial.
             </p>
           </div>
         </div>
