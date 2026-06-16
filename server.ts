@@ -166,9 +166,16 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log("Server started correctly");
-  });
+// Check if we are running on Vercel
+  const isVercel = process.env.VERCEL === "1";
+
+  if (!isVercel) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log("Server started correctly on port " + PORT);
+    });
+  }
 }
 
 startServer();
+
+export default app;
